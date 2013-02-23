@@ -5,7 +5,7 @@
 <div class="tabular settings">
 	<h3><%= l(:label_basic_settings)%></h3>
 	<p>
-		<label><%= l(:label_git_lock_wait_time)%></label>
+		<label><%= raw l(:label_git_lock_wait_time)%></label>
 		<%= text_field_tag("settings[gitLockWaitTime]", @settings['gitLockWaitTime'], :size => 10) %>
 		<br />
 	</p>
@@ -40,7 +40,7 @@
 
 	<h3><%= l(:label_gitolite_repository_settings)%></h3>
 	<p>
-		<label><%= l(:label_gitolite_config_file)%></label>
+		<label><%= raw l(:label_gitolite_config_file)%></label>
 		<%= text_field_tag("settings[gitConfigFile]", "./#{@settings['gitConfigFile']||GitHosting::GitoliteConfig::PRIMARY_CONF_FILE}", :size => 60) %>
 		<br />
 	</p>
@@ -50,17 +50,17 @@
 		<br />
 	</p>
 	<p>
-		<label><%= l(:label_git_repository_base_path)%></label>
+		<label><%= raw l(:label_git_repository_base_path)%></label>
 		<%= text_field_tag("settings[gitRepositoryBasePath]", "./#{@settings['gitRepositoryBasePath']}", :size => 60) %>
 		<br />
 	</p>
 	<p>
-		<label><%= l(:label_git_redmine_subdir)%></label>
+		<label><%= raw l(:label_git_redmine_subdir)%></label>
 		<%= text_field_tag("settings[gitRedmineSubdir]", "./#{@settings['gitRedmineSubdir']}", :size => 60) %>
 		<br />
 	</p>
 	<p>
-		<label><%= l(:label_git_repository_hierarchy)%></label>
+		<label><%= raw l(:label_git_repository_hierarchy)%></label>
 		<%= select_tag("settings[gitRepositoryHierarchy]", options_for_select([[l(:label_hierarchical), 'true'], [l(:label_flat), 'false']], @settings['gitRepositoryHierarchy'])) %>
 		<br />
 	</p>
@@ -92,18 +92,18 @@
 		<br />
 	</p>
 	<p>
-		<label><%= l(:label_delete_git_repositories)%></label>
+		<label><%= raw l(:label_delete_git_repositories)%></label>
 		<%= select_tag("settings[deleteGitRepositories]", options_for_select([[l(:label_enabled), 'true'], [l(:label_disabled), 'false']], @settings['deleteGitRepositories'])) %>
 		<br />
 	</p>
 	<p>
-		<label><%= l(:label_git_recycle_base_path)%></label>
+		<label><%= raw l(:label_git_recycle_base_path)%></label>
 		<%= text_field_tag("settings[gitRecycleBasePath]", "./#{@settings['gitRecycleBasePath']}", :size => 60) %>
 		<br />
 	</p>
 
 	<p>
-		<label><%= l(:label_git_recycle_expire_time)%></label>
+		<label><%= raw l(:label_git_recycle_expire_time)%></label>
 		<%= text_field_tag("settings[gitRecycleExpireTime]", @settings['gitRecycleExpireTime'], :size => 10) %>
 		<br />
 	</p>
@@ -122,7 +122,7 @@
 		<br />
 	</p>
 	<p>
-		<label><%= l(:label_http_server_subdir)%></label>
+		<label><%= raw l(:label_http_server_subdir)%></label>
 		<%= text_field_tag("settings[httpServerSubdir]", "./#{@settings['httpServerSubdir']}", :size => 60) %>
 		<br />
 	</p>
@@ -196,7 +196,7 @@
 	</p>
 	<p>
 		<label>PATH Directories</label>
-		<%= (ENV['PATH']).gsub(/:/, "<br/>") %>
+		<%= raw (ENV['PATH']).gsub(/:/, "<br/>") %>
 		<br/>
 	</p>
 </div>
