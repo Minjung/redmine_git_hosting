@@ -1,6 +1,6 @@
 def install_redmine_git_hosting_routes_new(map)
   RedmineApp::Application.routes.draw do
-    match ':repo_path/*path', :prefix => (Setting.plugin_redmine_git_hosting['httpServerSubdir'] rescue ""), :repo_path => /([^\/]+\/)*?[^\/]+\.git/, :controller => 'git_http', :action => 'show'
+    match ':repo_path/*path', :prefix => (Setting.plugin_redmine_git_hosting['httpServerSubdir'] rescue ""), :repo_path => /([^\/]+\/)*?[^\/]+\.git/, :controller => 'git_http', :action => 'index'
 
     # Handle the public keys plugin to my/account.
     scope "/my" do

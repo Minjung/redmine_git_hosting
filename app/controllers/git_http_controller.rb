@@ -14,7 +14,8 @@ class GitHttpController < ApplicationController
 	if proj_path_split = (params[:repo_path].match(/^(.*)\.git$/))
 	    @git_http_repo_path = repo_path = proj_path_split[1]
 
-	    if GitHosting.http_access_url(@repository) == repo_path
+          # fixme: somewhere added stupid ./
+	    if GitHosting.http_access_url(@repository).delete("./") == repo_path
 		p1 = params[:path][0] || ""
 		p2 = params[:path][1] || ""
 		p3 = params[:path][2] || ""
@@ -58,6 +59,8 @@ class GitHttpController < ApplicationController
     private
 
     def authenticate
+      # fixme: rails3 route blobbing will not convert *other to array
+      params[:path] = params[:path].split("/")
 	is_push = (params[:path][0] == "git-receive-pack")
 	query_valid = false
 	authentication_valid = true
@@ -101,6 +104,22 @@ class GitHttpController < ApplicationController
 	@git_http_control_pipe = IO.popen(command, File::RDWR)
 	@git_http_control_pipe.write(input)
 
+      if Rails::VERSION::MAJOR >= 3
+        self.response_body = Enumerator.new do |output|
+          buf_length=131072
+          buf = @git_http_control_pipe.read(buf_length)
+          while(!(buf.nil?) && buf.length == buf_length)
+            output <<  buf 
+            buf = @git_http_control_pipe.read(buf_length)
+          end
+          if(!(buf.nil?) && buf.length > 0)
+            output << buf 
+          end
+          @git_http_control_pipe.close
+          @git_http_control_pipe = nil
+        end
+
+      else
 	render :text => proc { |response, output|
 	    buf_length=131072
 	    buf = @git_http_control_pipe.read(buf_length)
@@ -114,6 +133,9 @@ class GitHttpController < ApplicationController
 	    @git_http_control_pipe.close
 	    @git_http_control_pipe = nil
 	}
+
+        
+      end
     end
 
     def get_info_refs(reqfile)
