@@ -12,10 +12,10 @@ Redmine::Plugin.register :redmine_git_hosting do
     url 'https://github.com/ericpaulbishop/redmine_git_hosting'
 
     settings :default => {
-	'httpServer' => 'zeus.artec-local',
+	'httpServer' => 'localhost',
 	'httpServerSubdir' => '',
-	'gitServer' => 'zeus.artec-local',
-	'gitUser' => 'git-test',
+	'gitServer' => 'localhost',
+	'gitUser' => 'git',
 	'gitConfigPath' => 'gitolite.conf', # Redmine gitolite config file
 	'gitConfigHasAdminKey' => 'true',   # Conf file should have admin key
 	'gitRepositoryBasePath' => 'repositories/',
