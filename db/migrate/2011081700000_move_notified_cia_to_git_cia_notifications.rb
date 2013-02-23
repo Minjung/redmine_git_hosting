@@ -13,20 +13,20 @@ class MoveNotifiedCiaToGitCiaNotifications < ActiveRecord::Migration
 	# Make sure uniqueness of the two columns, :scmid, :repository_id
 	add_index(:git_cia_notifications, [:scmid, :repository_id], :unique => true)
 
-	Project.find(:all).each {|project|
-	    if project.repository.is_a?(Repository::Git)
-		project.repository.changesets.each { |changeset|
-		    if changeset.respond_to?(:notified_cia) and changeset.notified_cia == 1
-			#project.repository.set_notified(changeset)
-			project.repository.cia_notifications.push GitCiaNotification.new(:scmid => changeset.scmid)
-			#cia_notification = GitCiaNotification.new
-			#cia_notification.scmid = changeset.scmid
-			#cia_notification.repository = project.repository
-			#cia_notification.save
-		    end
-		}
-	    end
-	}
+#	Project.find(:all).each {|project|
+#	    if project.repository.is_a?(Repository::Git)
+#		project.repository.changesets.each { |changeset|
+#		    if changeset.respond_to?(:notified_cia) and changeset.notified_cia == 1
+#			#project.repository.set_notified(changeset)
+#			project.repository.cia_notifications.push GitCiaNotification.new(:scmid => changeset.scmid)
+#			#cia_notification = GitCiaNotification.new
+#			#cia_notification.scmid = changeset.scmid
+#			#cia_notification.repository = project.repository
+#			#cia_notification.save
+#		    end
+#		}
+#	    end
+#	}
 	remove_column :changesets, :notified_cia if self.column_exists?(:changesets, :notified_cia)
     end
 

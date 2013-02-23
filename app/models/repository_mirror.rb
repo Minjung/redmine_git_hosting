@@ -18,10 +18,17 @@ class RepositoryMirror < ActiveRecord::Base
 
     before_validation :strip_whitespace
 
-    named_scope :active, {:conditions => {:active => RepositoryMirror::STATUS_ACTIVE}}
-    named_scope :inactive, {:conditions => {:active => RepositoryMirror::STATUS_INACTIVE}}
+    if Rails::VERSION::MAJOR >= 3 && Rails::VERSION::MINOR >= 1
+      scope :active, {:conditions => {:active => RepositoryMirror::STATUS_ACTIVE}}
+      scope :inactive, {:conditions => {:active => RepositoryMirror::STATUS_INACTIVE}}
 
-    named_scope :has_explicit_refspec, {:conditions => ['push_mode > 0']}
+      scope :has_explicit_refspec, {:conditions => ['push_mode > 0']}
+    else
+      named_scope :active, {:conditions => {:active => RepositoryMirror::STATUS_ACTIVE}}
+      named_scope :inactive, {:conditions => {:active => RepositoryMirror::STATUS_INACTIVE}}
+
+      named_scope :has_explicit_refspec, {:conditions => ['push_mode > 0']}
+    end
 
     def push
 	repo_path = GitHosting.repository_path(repository)
@@ -95,7 +102,7 @@ class RepositoryMirror < ActiveRecord::Base
 	    self.include_all_tags = false
 	    self.explicit_refspec = ""
 	elsif include_all_branches && include_all_tags
-	    errors.add_to_base("Cannot #{l(:field_include_all_branches)} and #{l(:field_include_all_tags)} at the same time.")
+	    errors.add(:base, "Cannot #{l(:field_include_all_branches)} and #{l(:field_include_all_tags)} at the same time.")
 	    errors.add(:explicit_refspec, "cannot be used with #{l(:field_include_all_branches)} or #{l(:field_include_all_tags)}") unless explicit_refspec.blank?
 	elsif !explicit_refspec.blank?
 	    errors.add(:explicit_refspec, "cannot be used with #{l(:field_include_all_branches)}.") if include_all_branches
@@ -107,7 +114,7 @@ class RepositoryMirror < ActiveRecord::Base
 		errors.add(:explicit_refspec, "cannot have null first component (will delete remote branch(s))")
 	    end
 	elsif !include_all_branches && !include_all_tags
-	    errors.add_to_base("Must include at least one item to push.")
+	    errors.add(:base, "Must include at least one item to push.")
 	end
     end
 

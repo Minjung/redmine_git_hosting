@@ -67,7 +67,7 @@
 <% end %>
 
 <script type="text/javascript">
-    ZeroClipboard.setMoviePath('<%= image_path('ZeroClipboard.swf', :plugin => 'redmine_git_hosting') %>');
+    ZeroClipboard.setMoviePath('<%= ApplicationExtHelper.plugin_asset_link('ZeroClipboard.swf') %>');
     setZeroClipboardInputSource("mirror_pubkey");
 
     function test_zc_vis() {

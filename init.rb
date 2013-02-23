@@ -12,20 +12,20 @@ Redmine::Plugin.register :redmine_git_hosting do
     url 'https://github.com/ericpaulbishop/redmine_git_hosting'
 
     settings :default => {
-	'httpServer' => 'localhost',
+	'httpServer' => 'zeus.artec-local',
 	'httpServerSubdir' => '',
-	'gitServer' => 'localhost',
-	'gitUser' => 'git',
+	'gitServer' => 'zeus.artec-local',
+	'gitUser' => 'git-test',
 	'gitConfigPath' => 'gitolite.conf', # Redmine gitolite config file
 	'gitConfigHasAdminKey' => 'true',   # Conf file should have admin key
 	'gitRepositoryBasePath' => 'repositories/',
 	'gitRedmineSubdir' => '',
-	'gitRepositoryHierarchy' => 'true',
+	'gitRepositoryHierarchy' => 'false',
 	'gitRecycleBasePath' => 'recycle_bin/',
 	'gitRecycleExpireTime' => '24.0',
 	'gitLockWaitTime' => '10',
-	'gitoliteIdentityFile' => RAILS_ROOT + '/.ssh/gitolite_admin_id_rsa',
-	'gitoliteIdentityPublicKeyFile' => RAILS_ROOT + '/.ssh/gitolite_admin_id_rsa.pub',
+	'gitoliteIdentityFile' => Rails.root.to_s + '/.ssh/gitolite_admin_id_rsa',
+	'gitoliteIdentityPublicKeyFile' => Rails.root.to_s + '/.ssh/gitolite_admin_id_rsa.pub',
 	'allProjectsUseGit' => 'false',
 	'gitDaemonDefault' => '1',   # Default is Daemon enabled
 	'gitHttpDefault' => '1',     # Default is HTTP_ONLY
@@ -57,20 +57,16 @@ Redmine::Plugin.register :redmine_git_hosting do
 end
 
 # Set up autoload of patches
-require 'dispatcher' unless Rails::VERSION::MAJOR >= 3
 def git_hosting_patch(&block)
-    if Rails::VERSION::MAJOR >= 3
-	ActionDispatch::Calbacks.to_prepare(&block)
-    else
-	Dispatcher.to_prepare(:redmine_git_patches,&block)
-    end
+    Rails.configuration.to_prepare(&block)
 end
+
 git_hosting_patch do
     patches=Dir[File.dirname(__FILE__)+"/lib/git_hosting/patches/*.rb"].map{|x| File.basename(x,".rb")}.sort
 
     # Special positioning necessary
     # Put git_adapter_patch last (make sure that git_cmd stays patched!)
-    patches = (patches-["git_adapter_patch"]) << "git_adapter_patch"
+    patches = (patches-["git_adapter_patch"]) << "git_adapter_patch" unless patches.empty?
     patches.each do |patch|
 	require_dependency 'git_hosting/patches/'+File.basename(patch,".rb")
     end
@@ -91,16 +87,26 @@ Redmine::Scm::Base.all.unshift("Git").uniq!
 # initialize observer
 # Don't initialize this while doing migration of primary system (i.e. Redmine/Chiliproject)
 migrating_primary = (File.basename($0) == "rake" && ARGV.include?("db:migrate"))
-config.after_initialize do
-    if config.action_controller.perform_caching && !migrating_primary
-	ActiveRecord::Base.observers = ActiveRecord::Base.observers << GitHostingObserver
-	ActiveRecord::Base.observers = ActiveRecord::Base.observers << GitHostingSettingsObserver
+RedmineApp::Application.config.after_initialize do
+    if RedmineApp::Application.config.action_controller.perform_caching && !migrating_primary
+	require_dependency File.expand_path(File.join(File.dirname(__FILE__), 'app/models/git_hosting_observer.rb'))
+	ActiveRecord::Base.observers << GitHostingObserver
+	require_dependency File.expand_path(File.join(File.dirname(__FILE__), 'app/models/git_hosting_settings_observer.rb'))
+	ActiveRecord::Base.observers << GitHostingSettingsObserver
 
-	ActionController::Dispatcher.to_prepare(:git_hosting_observer_reload) do
+	Rails.configuration.to_prepare do
 	    GitHostingObserver.instance.reload_this_observer
 	end
-	ActionController::Dispatcher.to_prepare(:git_hosting_settings_observer_reload) do
+
+	Rails.configuration.to_prepare do
 	    GitHostingSettingsObserver.instance.reload_this_observer
 	end
     end
 end
+
+require File.join(File.dirname(__FILE__), 'app', 'helpers', 'application_ext_helper')
+require File.join(File.dirname(__FILE__), 'app', 'helpers', 'gitolite_public_keys_helper')
+require File.join(File.dirname(__FILE__), 'app', 'controllers', 'gitolite_public_keys_controller')
+
+# for debugging only!!!
+ActiveRecord::Base.logger = Logger.new(STDOUT)

@@ -22,11 +22,19 @@ class GitolitePublicKey < ActiveRecord::Base
     has_many :deployment_credentials, :dependent => :destroy
     def validate_associated_records_for_deployment_credentials() end
 
-    named_scope :active, {:conditions => {:active => GitolitePublicKey::STATUS_ACTIVE}}
-    named_scope :inactive, {:conditions => {:active => GitolitePublicKey::STATUS_LOCKED}}
+    if Rails::VERSION::MAJOR >= 3 && Rails::VERSION::MINOR >= 1
+        scope :active, {:conditions => {:active => GitolitePublicKey::STATUS_ACTIVE}}
+        scope :inactive, {:conditions => {:active => GitolitePublicKey::STATUS_LOCKED}}
 
-    named_scope :user_key, {:conditions => {:key_type => GitolitePublicKey::KEY_TYPE_USER}}
-    named_scope :deploy_key, {:conditions => {:key_type => GitolitePublicKey::KEY_TYPE_DEPLOY}}
+        scope :user_key, {:conditions => {:key_type => GitolitePublicKey::KEY_TYPE_USER}}
+        scope :deploy_key, {:conditions => {:key_type => GitolitePublicKey::KEY_TYPE_DEPLOY}}
+    else
+        named_scope :active, {:conditions => {:active => GitolitePublicKey::STATUS_ACTIVE}}
+        named_scope :inactive, {:conditions => {:active => GitolitePublicKey::STATUS_LOCKED}}
+    
+        named_scope :user_key, {:conditions => {:key_type => GitolitePublicKey::KEY_TYPE_USER}}
+        named_scope :deploy_key, {:conditions => {:key_type => GitolitePublicKey::KEY_TYPE_DEPLOY}}
+    end
 
     validate :has_not_been_changed
     validates_inclusion_of :key_type, :in => [KEY_TYPE_USER, KEY_TYPE_DEPLOY]

@@ -1,3 +1,4 @@
+require_dependency 'project'
 require_dependency 'principal'
 require_dependency 'user'
 require_dependency 'git_hosting'
@@ -179,7 +180,7 @@ module GitHosting
 			# Need to make sure that we don't take the default slot away from a sibling repo with blank identifier
 			possibles=Repository.find_all_by_project_id(project.id,:conditions => ["identifier = '' or identifier is null"])
 			if possibles.any? && (new_record? || possibles.detect{|x| x.id != id})
-			    errors.add_to_base(:blank_default_exists)
+			    errors.add(:base, :blank_default_exists)
 			end
 		    end
 		end

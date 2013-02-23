@@ -12,8 +12,13 @@ class DeploymentCredential < ActiveRecord::Base
     validate :correct_key_type, :correct_perm_type, :no_duplicate_creds
     validate :owner_matches_key
 
-    named_scope :active, {:conditions => {:active => STATUS_ACTIVE}}
-    named_scope :inactive, {:conditions => {:active => STATUS_INACTIVE}}
+    if Rails::VERSION::MAJOR >= 3 && Rails::VERSION::MINOR >= 1
+      scope :active, {:conditions => {:active => STATUS_ACTIVE}}
+      scope :inactive, {:conditions => {:active => STATUS_INACTIVE}}
+    else
+      named_scope :active, {:conditions => {:active => STATUS_ACTIVE}}
+      named_scope :inactive, {:conditions => {:active => STATUS_INACTIVE}}
+    end
 
     def perm= (value)
 	write_attribute(:perm, (value.upcase rescue nil))
@@ -55,7 +60,7 @@ class DeploymentCredential < ActiveRecord::Base
 
     def correct_key_type
 	if gitolite_public_key && gitolite_public_key.key_type != GitolitePublicKey::KEY_TYPE_DEPLOY
-	    errors.add_to_base("Public Key Must Be a Deployment Key")
+	    errors.add(:base, "Public Key Must Be a Deployment Key")
 	end
     end
 
@@ -68,7 +73,7 @@ class DeploymentCredential < ActiveRecord::Base
     def owner_matches_key
 	return if user.nil? || gitolite_public_key.nil?
 	if user != gitolite_public_key.user
-	    errors.add_to_base("Credential owner cannot be different than owner of Key.")
+	    errors.add(:base, "Credential owner cannot be different than owner of Key.")
 	end
     end
 
@@ -76,7 +81,7 @@ class DeploymentCredential < ActiveRecord::Base
 	return if !new_record? || repository.nil? || gitolite_public_key.nil?
 	repository.deployment_credentials.each do |cred|
 	    if cred.gitolite_public_key == gitolite_public_key
-		errors.add_to_base("This Public Key has already been used in a Deployment Credential for this repository.")
+		errors.add(:base, "This Public Key has already been used in a Deployment Credential for this repository.")
 	    end
 	end
     end

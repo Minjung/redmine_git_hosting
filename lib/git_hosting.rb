@@ -235,6 +235,8 @@ module GitHosting
 	    # Further, absolute path adds additional 'git_user' component for multi-gitolite installations.
 	    if script_dir[0,1] == "/"
 		@@git_hosting_bin_dir = File.join(script_dir,git_user,SCRIPT_PARENT) + "/"
+            elsif Rails::VERSION::MAJOR >= 3
+		@@git_hosting_bin_dir = Rails.root.join("plugins/redmine_git_hosting",script_dir,SCRIPT_PARENT).to_s+"/"
 	    else
 		@@git_hosting_bin_dir = Rails.root.join("vendor/plugins/redmine_git_hosting",script_dir,SCRIPT_PARENT).to_s+"/"
 	    end

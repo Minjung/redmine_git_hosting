@@ -13,8 +13,13 @@ class RepositoryPostReceiveUrl < ActiveRecord::Base
 
     before_validation :strip_whitespace
 
-    named_scope :active, {:conditions => {:active => RepositoryPostReceiveUrl::STATUS_ACTIVE}}
-    named_scope :inactive, {:conditions => {:active => RepositoryPostReceiveUrl::STATUS_INACTIVE}}
+    if Rails::VERSION::MAJOR >= 3 && Rails::VERSION::MINOR >= 1
+      scope :active, {:conditions => {:active => RepositoryPostReceiveUrl::STATUS_ACTIVE}}
+      scope :inactive, {:conditions => {:active => RepositoryPostReceiveUrl::STATUS_INACTIVE}}
+    else
+      named_scope :active, {:conditions => {:active => RepositoryPostReceiveUrl::STATUS_ACTIVE}}
+      named_scope :inactive, {:conditions => {:active => RepositoryPostReceiveUrl::STATUS_INACTIVE}}
+    end
 
     validates_inclusion_of :mode, :in => [:github, :get]
     def mode

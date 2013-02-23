@@ -7,7 +7,7 @@
 		    <br />(Will delete corresponding key: <%= "#{keylabel(@cred.gitolite_public_key)}".html_safe %>)
 		<% end %>
 	</p>
-	<% form_tag url_for(:controller => 'deployment_credentials', :action => 'destroy', :project_id => @project, :id => @cred.id ), :method => :delete do %>
+	<%= form_tag url_for(:controller => 'deployment_credentials', :action => 'destroy', :project_id => @project, :id => @cred.id ), :method => :delete do %>
 	<p>
 		<label><%= check_box_tag 'confirm', 1 %> <%= l(:general_text_Yes) %></label>
 		<%= submit_tag l(:button_delete) %>

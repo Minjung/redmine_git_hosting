@@ -1,4 +1,4 @@
-module ApplicationHelper
+module ApplicationExtHelper
 
     #
     # These functions are for backward compatability with versions of redmine < 1.3
@@ -16,7 +16,7 @@ module ApplicationHelper
 	def labelled_form_for(*args, &proc)
 	    args << {} unless args.last.is_a?(Hash)
 	    options = args.last
-	    options.merge!({:builder => TabularFormBuilder,:lang => current_language})
+	    options.merge!({:builder => Redmine::Views::LabelledFormBuilder,:lang => current_language})
 	    form_for(*args, &proc)
 	end
     end
@@ -25,8 +25,8 @@ module ApplicationHelper
 	def labelled_remote_form_for(*args, &proc)
 	    args << {} unless args.last.is_a?(Hash)
 	    options = args.last
-	    options.merge!({:builder => TabularFormBuilder,:lang => current_language})
-	    remote_form_for(*args, &proc)
+	    options.merge!({:builder => Redmine::Views::LabelledFormBuilder,:lang => current_language,:remote => true})
+	    form_for(*args, &proc)
 	end
     end
 
@@ -34,7 +34,7 @@ module ApplicationHelper
 	def labelled_fields_for(*args, &proc)
 	    args << {} unless args.last.is_a?(Hash)
 	    options = args.last
-	    options.merge!({:builder => TabularFormBuilder,:lang => current_language})
+	    options.merge!({:builder => Redmine::Views::LabelledFormBuilder,:lang => current_language})
 	    fields_for(*args, &proc)
 	end
     end
@@ -80,4 +80,9 @@ module ApplicationHelper
 	    [l(:label_mirror),l(:label_forced),l(:label_unforced)][mirror.push_mode]
 	end
     end
+
+    def self.plugin_asset_link(asset_name)
+      File.join(Redmine::Utils.relative_url_root, 'plugin_assets', 'redmine_git_hosting', asset_name)
+    end
+
 end

@@ -1,3 +1,4 @@
+require_dependency 'project'
 require_dependency 'principal'
 require_dependency 'user'
 require_dependency 'git_hosting'
@@ -30,6 +31,7 @@ module GitHosting
 		base.class_eval do
 		    unloadable
 
+#		    helper :application_ext
 		    helper :gitolite_public_keys
 		end
 		begin

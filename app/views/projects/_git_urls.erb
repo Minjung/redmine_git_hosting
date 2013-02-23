@@ -27,7 +27,7 @@
 			       window.onload = setGitUrlOnload;
 			}
 
-			ZeroClipboard.setMoviePath('<%= image_path('ZeroClipboard.swf', :plugin => 'redmine_git_hosting') %>');
+			ZeroClipboard.setMoviePath('<%= ApplicationExtHelper.plugin_asset_link('ZeroClipboard.swf') %>');
 			setZeroClipboardInputSource("git_url_text");
 		</script>
 	<% end %>
