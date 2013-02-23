@@ -61,7 +61,7 @@ end
 require 'dispatcher' unless Rails::VERSION::MAJOR >= 3
 def git_hosting_patch(&block)
   if Rails::VERSION::MAJOR >= 3
-    ActionDispatch::Calbacks.to_prepare(&block)
+    ActionDispatch::Callbacks.to_prepare(&block)
   else
     Dispatcher.to_prepare(:redmine_git_patches,&block)
   end
