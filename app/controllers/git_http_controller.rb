@@ -14,8 +14,7 @@ class GitHttpController < ApplicationController
 	if proj_path_split = (params[:repo_path].match(/^(.*)\.git$/))
 	    @git_http_repo_path = repo_path = proj_path_split[1]
 
-          # fixme: somewhere added stupid ./
-	    if GitHosting.http_access_url(@repository).delete("./") == repo_path
+	    if GitHosting.http_access_url(@repository) == repo_path
 		p1 = params[:path][0] || ""
 		p2 = params[:path][1] || ""
 		p3 = params[:path][2] || ""

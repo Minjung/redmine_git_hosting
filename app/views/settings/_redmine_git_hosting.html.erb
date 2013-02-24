@@ -41,7 +41,7 @@
 	<h3><%= l(:label_gitolite_repository_settings)%></h3>
 	<p>
 		<label><%= raw l(:label_gitolite_config_file)%></label>
-		<%= text_field_tag("settings[gitConfigFile]", "./#{@settings['gitConfigFile']||GitHosting::GitoliteConfig::PRIMARY_CONF_FILE}", :size => 60) %>
+		<%= text_field_tag("settings[gitConfigFile]", "#{@settings['gitConfigFile']||GitHosting::GitoliteConfig::PRIMARY_CONF_FILE}", :size => 60) %>
 		<br />
 	</p>
 	<p>
@@ -51,12 +51,12 @@
 	</p>
 	<p>
 		<label><%= raw l(:label_git_repository_base_path)%></label>
-		<%= text_field_tag("settings[gitRepositoryBasePath]", "./#{@settings['gitRepositoryBasePath']}", :size => 60) %>
+		<%= text_field_tag("settings[gitRepositoryBasePath]", "#{@settings['gitRepositoryBasePath']}", :size => 60) %>
 		<br />
 	</p>
 	<p>
 		<label><%= raw l(:label_git_redmine_subdir)%></label>
-		<%= text_field_tag("settings[gitRedmineSubdir]", "./#{@settings['gitRedmineSubdir']}", :size => 60) %>
+		<%= text_field_tag("settings[gitRedmineSubdir]", "#{@settings['gitRedmineSubdir']}", :size => 60) %>
 		<br />
 	</p>
 	<p>
@@ -98,7 +98,7 @@
 	</p>
 	<p>
 		<label><%= raw l(:label_git_recycle_base_path)%></label>
-		<%= text_field_tag("settings[gitRecycleBasePath]", "./#{@settings['gitRecycleBasePath']}", :size => 60) %>
+		<%= text_field_tag("settings[gitRecycleBasePath]", "#{@settings['gitRecycleBasePath']}", :size => 60) %>
 		<br />
 	</p>
 
@@ -123,7 +123,7 @@
 	</p>
 	<p>
 		<label><%= raw l(:label_http_server_subdir)%></label>
-		<%= text_field_tag("settings[httpServerSubdir]", "./#{@settings['httpServerSubdir']}", :size => 60) %>
+		<%= text_field_tag("settings[httpServerSubdir]", "#{@settings['httpServerSubdir']}", :size => 60) %>
 		<br />
 	</p>
 	<p>
