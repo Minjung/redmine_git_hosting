@@ -80,10 +80,10 @@ if defined? map
     install_redmine_git_hosting_routes_old(map)
   end
 else
-  ActionController::Routing::Routes.draw do |map|
-    if Rails::VERSION::MAJOR >= 3
-      install_redmine_git_hosting_routes_new(map)
-    else
+  if Rails::VERSION::MAJOR >= 3
+      install_redmine_git_hosting_routes_new(nil)
+  else
+    ActionController::Routing::Routes.draw do |map|
       install_redmine_git_hosting_routes_old(map)
     end
   end
